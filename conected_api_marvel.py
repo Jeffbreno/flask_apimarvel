@@ -10,6 +10,18 @@ pub_key = '2fdf3882e0d438d46d210cd50a7229f5'
 priv_key = '7043e5637186ff32aa617add10dc2ee3e302f02a'
 
 
+def getAll():
+
+    return True
+
+def getId(id):
+
+    return True
+
+def getNome(nome):
+
+    return True
+
 def hash_params():
     """ Marvel API requires server side API calls to include
     md5 hash of timestamp + public key + private key """
@@ -26,4 +38,4 @@ res = requests.get('https://gateway.marvel.com:443/v1/public/characters',
                    params=params)
 
 results = res.json()
-pp(results)
+# pp(results)
