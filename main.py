@@ -1,10 +1,7 @@
+from flask import Flask, render_template, request, redirect, session, flash, url_for
 from marvel import Marvel
-import requests
-from rich import print
-from rich.console import Console
-from rich.table import Table
-
-console = Console()
+import math 
+# import requests
 
 PUBLIC_KEY = '2fdf3882e0d438d46d210cd50a7229f5'
 PRIVATE_KEY = '7043e5637186ff32aa617add10dc2ee3e302f02a'
@@ -14,46 +11,42 @@ marvel = Marvel(PUBLIC_KEY=PUBLIC_KEY,
 
 characters = marvel.characters
 
+app = Flask(__name__)
 
-def main():
+def listPag():
+    i = 1
+    total = characters.all()["data"]["total"]
+    ultima_pag = math.ceil(total / 30)
+    paginas = []
+    x = range(ultima_pag)
 
-    personagens = characters.all(name="Black Panther")["data"]["results"]
+    for i in x:
+        if(i > 0):
+            paginas.append(i)
 
-    table = Table(title='Marvel characters')
-    headers = (
-        'id',
-        'name',
-        'description',
-        'imagem'
-    )
+    return paginas
 
-    for header in headers:
-        table.add_column(header)
+def pag(pagina):
+    
+    if(pagina == 1):
+        pagina = 0
 
-    for personagem in personagens:
-        values = str(personagem['id']), str(
-            personagem['name']), str(personagem['description'], str(personagem["thumbnail"]["path"]+"."+personagem["thumbnail"]["extension"]))
-        table.add_row(*values)
+    offset = pagina * 30
 
-    console.print(table)
+    return offset
 
-if __name__ == '__main__':
-    main()
+@app.route('/')
+def index():
 
-# from marvel import Marvel
+    characters = marvel.characters
+    pagina = pag(int(request.args.get('pag')))
 
-# PUBLIC_KEY = '2fdf3882e0d438d46d210cd50a7229f5'
-# PRIVATE_KEY = '7043e5637186ff32aa617add10dc2ee3e302f02a'
+    personagens = characters.all(offset=pagina, limit=30)["data"]["results"]
+    return render_template('marvel.html', title='Herois Marvel', personagens=personagens, paginas=listPag())
 
-# marvel = Marvel(PUBLIC_KEY=PUBLIC_KEY, 
-# 	PRIVATE_KEY=PRIVATE_KEY)
+@app.route('/salvar')
+def salvar():
 
-# characters = marvel.characters
+    return True
 
-# my_char = characters.all(name="Black Panther")["data"]["results"]
-
-# for char in my_char:
-# 	print(char["id"], " | ", char["name"], " | ", char["thumbnail"]["path"],".",char["thumbnail"]["extension"])
-# 	# for comic in char["comics"]["items"]:
-# 	#     print(comic["name"])
-# 	print("---------------------")
+app.run(debug=True, host='localhost', port=5225)

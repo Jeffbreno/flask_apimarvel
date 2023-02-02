@@ -1,0 +1,42 @@
+{% extends "template.html" %}
+{% block conteudo %}
+<p>Você esta na página {{ request.args.get('pag') }} de {{paginas[-1]}}</p>
+
+<form action="/" class="row mb-3">
+    <div class="col-md-1">
+        <select name="pag" class="form-select">
+            {% for pag in paginas %}
+            <option value="{{ pag }}">{{ pag }}</option>
+            {%endfor%}
+        </select>
+    </div>
+    <div class="col-md-5">
+        <button type="submit" class="btn btn-secondary">IR</button>
+
+    </div>
+</form>
+<div class="row mb-2">
+    {% for perso in personagens %}
+    <div class="col-md-6">
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+                <strong class="d-inline-block mb-2 text-primary">Registro: {{ perso.id }}</strong>
+                <h3 class="mb-0">{{ perso.name }}</h3>
+                <div class="mb-1 text-muted">Descrição</div>
+                <p class="card-text mb-auto">{{ perso.description }}</p>
+                <div class="ml-2 form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Candidato
+                    </label>
+                </div>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+                <img src="{{ perso.thumbnail["path"]+"."+perso.thumbnail["extension"]}}" class="bd-placeholder-img"
+                    width="250" height="250">
+            </div>
+        </div>
+    </div>
+    {%endfor%}
+</div>
+{% endblock %}
